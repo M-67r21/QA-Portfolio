@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Raphael Musyoki — QA Engineer</title>
+<meta name="description" content="Raphael Musyoki — QA Tester specializing in manual testing, API testing with Postman, and test case design. Nairobi, Kenya.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#061417;
+    --paper-dim:#0b2127;
+    --ink:#EAFBFA;
+    --ink-soft:#B9DAD7;
+    --ink-faint:#8AC7C0;
+    --line:rgba(127, 224, 214, 0.18);
+    --card:#0B1D22;
+    --pass:#5BE6D7;
+    --pass-bg:rgba(91, 230, 215, 0.12);
+    --rust:#FF8C6A;
+    --rust-bg:rgba(255, 140, 106, 0.12);
+    --amber:#F3C76B;
+    --shadow: 0 1px 2px rgba(0,0,0,0.22), 0 18px 42px rgba(19, 178, 165, 0.12);
+    --radius: 3px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background: radial-gradient(circle at top, rgba(91, 230, 215, 0.18), transparent 28%), linear-gradient(135deg, #02070b 0%, #071a1d 24%, #0d2c2a 58%, #041015 100%);
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    letter-spacing:-0.01em;
+    color:var(--ink);
+  }
+  .mono{font-family:'JetBrains Mono', monospace;}
+  a{color:inherit; text-decoration:none;}
+  img{max-width:100%; display:block;}
+  .container{max-width:1120px; margin:0 auto; padding:0 28px;}
+  section{padding:96px 0;}
+  @media (max-width:720px){ section{padding:64px 0;} .container{padding:0 20px;} }
+
+  /* ---------- status strip ---------- */
+  .status-strip{
+    background:var(--ink);
+    color:var(--paper);
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.03em;
+    padding:7px 0;
+    overflow:hidden;
+    white-space:nowrap;
+  }
+  .status-strip .track{
+    display:inline-flex;
+    gap:48px;
+    animation: ticker 22s linear infinite;
+    padding-left:100%;
+  }
+  .status-strip .dot{color:var(--pass); margin-right:6px;}
+  @keyframes ticker{ 0%{transform:translateX(0);} 100%{transform:translateX(-100%);} }
+  @media (prefers-reduced-motion: reduce){ .status-strip .track{animation:none; padding-left:24px;} }
+
+  /* ---------- nav ---------- */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(6, 20, 23, 0.78);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 28px; max-width:1120px; margin:0 auto;
+  }
+  .logo{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700; font-size:18px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .logo .tag{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10px; font-weight:600;
+    color:var(--pass); background:var(--pass-bg);
+    border:1px solid var(--pass);
+    padding:2px 6px; border-radius:2px;
+    letter-spacing:0.05em;
+  }
+  .nav-links{display:flex; gap:32px; list-style:none; font-size:14px; font-weight:500;}
+  .nav-links a{color:var(--ink-soft); transition:color .15s;}
+  .nav-links a:hover{color:var(--ink);}
+  .nav-badge{
+    font-family:'JetBrains Mono', monospace; font-size:11px; font-weight:600;
+    color:var(--pass); border:1px solid var(--pass); background:var(--pass-bg);
+    padding:5px 10px; border-radius:2px; display:flex; align-items:center; gap:6px;
+  }
+  .nav-badge .pulse{width:6px; height:6px; border-radius:50%; background:var(--pass); animation:pulse 1.6s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{opacity:1;} 50%{opacity:.3;}}
+  .menu-btn{display:none; background:none; border:1px solid var(--line); border-radius:2px; padding:8px 10px; font-family:'JetBrains Mono',monospace; font-size:12px;}
+  @media (max-width:800px){
+    .nav-links{display:none;}
+    .menu-btn{display:block;}
+    .nav-badge{display:none;}
+  }
+  .nav-links.open{
+    display:flex; flex-direction:column; gap:0;
+    position:absolute; top:100%; left:0; right:0;
+    background:var(--paper); border-bottom:1px solid var(--line);
+    padding:8px 28px 16px;
+  }
+  .nav-links.open li{padding:10px 0; border-bottom:1px solid var(--line);}
+  .nav-links.open li:last-child{border-bottom:none;}
+
+  /* ---------- hero ---------- */
+  .hero{padding:88px 0 72px;}
+  .hero-grid{display:grid; grid-template-columns:1.05fr 0.95fr; gap:56px; align-items:center;}
+  @media (max-width:900px){ .hero-grid{grid-template-columns:1fr;} }
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--ink-faint);
+    text-transform:uppercase; letter-spacing:0.1em; margin-bottom:18px; display:flex; align-items:center; gap:8px;
+  }
+  .eyebrow::before{content:'//'; color:var(--rust);}
+  .hero h1{font-size:clamp(34px,5vw,54px); line-height:1.08; margin-bottom:20px;}
+  .hero h1 em{font-style:normal; color:var(--pass);}
+  .hero p.lede{font-size:17px; color:var(--ink-soft); max-width:46ch; margin-bottom:32px;}
+  .btn-row{display:flex; gap:14px; flex-wrap:wrap; margin-bottom:40px;}
+  .btn{
+    font-family:'Inter'; font-weight:600; font-size:14px;
+    padding:13px 22px; border-radius:2px; border:1px solid transparent;
+    display:inline-flex; align-items:center; gap:8px; transition:all .15s;
+  }
+  .btn-primary{background:var(--ink); color:var(--paper);}
+  .btn-primary:hover{background:var(--pass); box-shadow:0 0 18px rgba(91,230,215,0.35);}
+  .btn-secondary{border-color:var(--ink); color:var(--ink);}
+  .btn-secondary:hover{background:var(--ink); color:var(--paper); box-shadow:0 0 16px rgba(234,251,250,0.2);}
+
+  .summary-line{
+    font-family:'JetBrains Mono', monospace; font-size:13px; color:var(--ink-soft);
+    border-top:1px solid var(--line); padding-top:18px; display:flex; gap:24px; flex-wrap:wrap;
+  }
+  .summary-line b{color:var(--pass); font-weight:600;}
+  .summary-line .fail{color:var(--rust); font-weight:600;}
+
+  /* ---------- terminal ---------- */
+  .terminal{
+    background:var(--ink); border-radius:6px; overflow:hidden; box-shadow:0 0 0 1px rgba(91,230,215,0.18), 0 18px 38px rgba(91,230,215,0.12), var(--shadow);
+  }
+  .term-bar{
+    display:flex; align-items:center; gap:6px; padding:11px 14px;
+    background:#141917; border-bottom:1px solid #2a322e;
+  }
+  .term-bar span{width:10px; height:10px; border-radius:50%; background:#3a433e;}
+  .term-bar .title{
+    font-family:'JetBrains Mono',monospace; font-size:11px; color:#7b8580;
+    margin-left:8px;
+  }
+  .term-body{
+    padding:22px 20px 26px; font-family:'JetBrains Mono', monospace; font-size:13px;
+    color:#eaf7ff; min-height:280px; background:linear-gradient(180deg, #081a1e 0%, #071820 100%);
+  }
+  .term-body .line{margin-bottom:9px; white-space:pre-wrap;}
+  .term-body .comment{color:#7dd3fc;}
+  .term-body .fn{color:#fbbf24;}
+  .term-body .str{color:#86efac;}
+  .term-body .pass-tag{color:#67e8f9; font-weight:700;}
+  .term-body .cursor{display:inline-block; width:7px; height:14px; background:#f8fafc; vertical-align:-2px; animation:blink 1s step-end infinite;}
+  @keyframes blink{50%{opacity:0;}}
+
+  /* ---------- section headers ---------- */
+  .section-head{margin-bottom:44px; max-width:640px;}
+  .section-head .eyebrow{margin-bottom:12px;}
+  .section-head h2{font-size:clamp(26px,3.4vw,36px);}
+  .section-head p{color:var(--ink-soft); margin-top:10px; font-size:15px;}
+
+  /* ---------- about / checklist ---------- */
+  .about-grid{display:grid; grid-template-columns:0.9fr 1.1fr; gap:64px; align-items:start;}
+  @media (max-width:860px){ .about-grid{grid-template-columns:1fr; gap:36px;} }
+  .about-grid p{color:var(--ink-soft); margin-bottom:16px; font-size:15px;}
+  .about-grid strong{color:var(--ink);}
+  .checklist{list-style:none;}
+  .checklist li{
+    display:flex; gap:12px; padding:14px 0; border-bottom:1px solid var(--line);
+  }
+  .checklist li:first-child{border-top:1px solid var(--line);}
+  .checkbox{
+    flex-shrink:0; width:20px; height:20px; border-radius:3px; background:var(--pass);
+    display:flex; align-items:center; justify-content:center; margin-top:2px;
+  }
+  .checkbox svg{width:12px; height:12px;}
+  .checklist .item-title{font-weight:600; font-size:15px; margin-bottom:2px;}
+  .checklist .item-desc{font-size:13.5px; color:var(--ink-soft);}
+
+  /* ---------- filter ---------- */
+  .filters{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:36px;}
+  .filter-btn{
+    font-family:'JetBrains Mono', monospace; font-size:12px; font-weight:500;
+    padding:8px 14px; border:1px solid var(--line); border-radius:2px; background:var(--card);
+    color:var(--ink-soft); cursor:pointer; transition:all .15s;
+  }
+  .filter-btn:hover{border-color:var(--ink);}
+  .filter-btn.active{background:var(--ink); color:var(--paper); border-color:var(--ink);}
+
+  /* ---------- ticket cards ---------- */
+  .tickets{display:grid; grid-template-columns:repeat(2,1fr); gap:22px;}
+  @media (max-width:760px){ .tickets{grid-template-columns:1fr;} }
+  .ticket{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:22px; box-shadow:0 0 0 1px rgba(91,230,215,0.12), 0 20px 42px rgba(19,178,165,0.08); position:relative;
+    display:flex; flex-direction:column; gap:12px;
+    transition:transform .18s, box-shadow .18s;
+  }
+  .ticket:hover{transform:translateY(-3px); box-shadow:0 0 0 1px rgba(91,230,215,0.18), 0 20px 44px rgba(91,230,215,0.12);}
+  .ticket-top{display:flex; justify-content:space-between; align-items:flex-start; gap:10px;}
+  .ticket-id{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--ink-faint); font-weight:600;}
+  .status-pill{
+    font-family:'JetBrains Mono',monospace; font-size:10.5px; font-weight:700;
+    color:var(--pass); background:var(--pass-bg); border:1px solid var(--pass);
+    padding:3px 8px; border-radius:2px; letter-spacing:0.04em; white-space:nowrap;
+  }
+  .ticket h3{font-size:17px; margin-bottom:2px;}
+  .ticket .desc{font-size:13.5px; color:var(--ink-soft);}
+  .tag-row{display:flex; gap:6px; flex-wrap:wrap;}
+  .tag{
+    font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--ink-soft);
+    border:1px solid var(--line); padding:3px 7px; border-radius:2px;
+  }
+  .ticket-links{display:flex; gap:16px; margin-top:auto; padding-top:6px; font-size:13px; font-weight:600;}
+  .ticket-links a{color:var(--rust); display:flex; align-items:center; gap:4px;}
+  .ticket-links a:hover{text-decoration:underline;}
+  .priority{
+    font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; color:var(--amber);
+  }
+
+  /* ---------- coverage / tools ---------- */
+  .tool-groups{display:grid; grid-template-columns:repeat(2,1fr); gap:32px; margin-bottom:56px;}
+  @media (max-width:760px){ .tool-groups{grid-template-columns:1fr;} }
+  .tool-group h3{font-size:14px; font-family:'JetBrains Mono',monospace; color:var(--ink-faint); margin-bottom:14px; text-transform:uppercase; letter-spacing:0.06em;}
+  .chip-row{display:flex; gap:8px; flex-wrap:wrap;}
+  .chip{
+    font-size:13px; padding:7px 13px; background:var(--card); border:1px solid var(--line);
+    border-radius:20px; color:var(--ink);
+  }
+  .coverage h3{font-size:14px; font-family:'JetBrains Mono',monospace; color:var(--ink-faint); margin-bottom:20px; text-transform:uppercase; letter-spacing:0.06em;}
+  .bar-item{margin-bottom:18px;}
+  .bar-label{display:flex; justify-content:space-between; font-size:13.5px; margin-bottom:7px;}
+  .bar-label .pct{font-family:'JetBrains Mono',monospace; color:var(--pass); font-weight:700;}
+  .bar-track{height:8px; background:var(--paper-dim); border-radius:4px; overflow:hidden; border:1px solid var(--line);}
+  .bar-fill{height:100%; background:linear-gradient(90deg, var(--pass), #3a9269); border-radius:4px; width:0%; transition:width 1.1s cubic-bezier(.2,.8,.2,1);}
+
+  /* ---------- contact ---------- */
+  .contact-wrap{display:grid; grid-template-columns:0.85fr 1.15fr; gap:56px;}
+  @media (max-width:860px){ .contact-wrap{grid-template-columns:1fr; gap:36px;} }
+  .contact-info p{color:var(--ink-soft); margin-bottom:24px; font-size:15px;}
+  .contact-line{display:flex; align-items:center; gap:10px; margin-bottom:14px; font-size:14.5px;}
+  .contact-line .k{font-family:'JetBrains Mono',monospace; color:var(--ink-faint); font-size:11px; width:64px; flex-shrink:0;}
+  .social-row{display:flex; gap:14px; margin-top:24px;}
+  .social-row a{
+    width:38px; height:38px; border:1px solid var(--line); border-radius:2px;
+    display:flex; align-items:center; justify-content:center; transition:all .15s;
+  }
+  .social-row a:hover{background:var(--ink); border-color:var(--ink);}
+  .social-row a:hover svg{stroke:var(--paper);}
+  .social-row svg{width:16px; height:16px; stroke:var(--ink); transition:stroke .15s;}
+
+  form{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:28px; box-shadow:var(--shadow);}
+  .form-head{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--ink-faint); margin-bottom:18px; display:flex; justify-content:space-between;}
+  .field{margin-bottom:16px;}
+  .field label{display:block; font-size:12.5px; font-weight:600; margin-bottom:6px; color:var(--ink-soft);}
+  .field input, .field select, .field textarea{
+    width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:2px;
+    background:var(--paper); font-family:'Inter'; font-size:14px; color:var(--ink);
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{outline:2px solid var(--pass); outline-offset:1px;}
+  .field textarea{resize:vertical; min-height:90px;}
+  .row-2{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  @media (max-width:480px){ .row-2{grid-template-columns:1fr;} }
+  .submit-btn{
+    width:100%; background:var(--ink); color:var(--paper); font-weight:600; font-size:14.5px;
+    padding:13px; border:none; border-radius:2px; cursor:pointer; transition:background .15s;
+  }
+  .submit-btn:hover{background:var(--pass);}
+  .form-msg{
+    margin-top:14px; font-size:13.5px; color:var(--pass); font-family:'JetBrains Mono',monospace;
+    display:none; padding:10px 12px; background:var(--pass-bg); border:1px solid var(--pass); border-radius:2px;
+  }
+  .form-msg.show{display:block;}
+
+  footer{border-top:1px solid var(--line); padding:32px 0; }
+  .footer-row{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; font-size:13px; color:var(--ink-faint);}
+  .footer-links{display:flex; gap:22px;}
+  .footer-links a{color:var(--ink-soft);}
+  .footer-links a:hover{color:var(--ink);}
+
+  .reveal{opacity:0; transform:translateY(14px); transition:opacity .5s ease, transform .5s ease;}
+  .reveal.in{opacity:1; transform:translateY(0);}
+</style>
+</head>
+<body>
+
+<div class="status-strip">
+  <div class="track mono">
+    <span><span class="dot">●</span>BUILD #142 — PASSING</span>
+    <span>24 test cases executed</span>
+    <span>0 blockers</span>
+    <span>last run: today</span>
+    <span>env: production</span>
+    <span><span class="dot">●</span>BUILD #142 — PASSING</span>
+    <span>24 test cases executed</span>
+    <span>0 blockers</span>
+    <span>last run: today</span>
+    <span>env: production</span>
+  </div>
+</div>
+
+<header>
+  <nav>
+    <a href="#hero" class="logo">RM<span class="tag">QA</span></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#about">About</a></li>
+      <li><a href="#projects">Test Cases</a></li>
+      <li><a href="#coverage">Coverage</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div style="display:flex; align-items:center; gap:14px;">
+      <div class="nav-badge"><span class="pulse"></span>AVAILABLE FOR WORK</div>
+      <button class="menu-btn mono" id="menuBtn" aria-label="Toggle menu">MENU</button>
+    </div>
+  </nav>
+</header>
+
+<section class="hero" id="hero">
+  <div class="container hero-grid">
+    <div>
+      <div class="eyebrow">QA_ENGINEER</div>
+      <h1>I find the bugs<br>before your <em>users</em> do.</h1>
+      <p class="lede">Raphael Musyoki — QA Tester focused on manual testing, API testing with Postman, and test case design that catches what a quick click-through misses.</p>
+      <div class="btn-row">
+        <a href="#projects" class="btn btn-primary">View Test Cases →</a>
+        <a href="#contact" class="btn btn-secondary">Get In Touch</a>
+      </div>
+      <div class="summary-line mono">
+        <span><b>24</b> tests run</span>
+        <span><b>100%</b> pass rate</span>
+        <span>0 <span style="color:var(--ink-soft); font-weight:400;">open defects</span></span>
+        <span>~1yr <span style="color:var(--ink-soft); font-weight:400;">in QA &amp; testing</span></span>
+      </div>
+    </div>
+    <div class="terminal">
+      <div class="term-bar">
+        <span></span><span></span><span></span>
+        <span class="title">postman — collection.test.js</span>
+      </div>
+      <div class="term-body mono" id="termBody"></div>
+    </div>
+  </div>
+</section>
+
+<!-- About Section -->
+<section id="about">
+  <div class="container about-grid">
+    <div class="reveal">
+      <div class="eyebrow">TEST_PLAN.MD</div>
+      <h2 style="font-size:28px; margin-bottom:16px;">A tester's read on the product</h2>
+      <p>I'm a QA Tester based in Nairobi, building toward a QA Engineer role — a BBIT graduate from Dedan Kimathi University of Technology who came to quality assurance through building things first.</p>
+      <p>That front-end and web development background is what shapes how I test: I don't just click through a checklist, I think about <strong>what the code is actually doing</strong> underneath — which is how a broken auth flow or an edge case in a form validator gets caught before it ships.</p>
+      <p>My process: read the requirement like a spec, write test cases before I touch the product, execute methodically, and file bug reports a developer can act on without asking a follow-up question.</p>
+    </div>
+    <ul class="checklist reveal">
+      <li>
+        <div class="checkbox"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8L6.5 11.5L13 4.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div><div class="item-title">Manual &amp; Exploratory Testing</div><div class="item-desc">Functional, UI, regression and cross-browser testing across web applications.</div></div>
+      </li>
+      <li>
+        <div class="checkbox"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8L6.5 11.5L13 4.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div><div class="item-title">API Testing with Postman</div><div class="item-desc">Collections, environments, pre-request scripts, and assertion writing with pm.test() &amp; pm.expect().</div></div>
+      </li>
+      <li>
+        <div class="checkbox"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8L6.5 11.5L13 4.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div><div class="item-title">Test Case Design &amp; Planning</div><div class="item-desc">Turning requirements into structured test plans with clear pass/fail criteria.</div></div>
+      </li>
+      <li>
+        <div class="checkbox"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8L6.5 11.5L13 4.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div><div class="item-title">Bug Reporting &amp; Tracking</div><div class="item-desc">Clear, reproducible defect reports that developers can action without back-and-forth.</div></div>
+      </li>
+      <li>
+        <div class="checkbox"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8L6.5 11.5L13 4.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div><div class="item-title">Code Quality Audits</div><div class="item-desc">Static analysis with SonarQube to flag quality and maintainability issues early.</div></div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- Projects Section -->
+<section id="projects" style="background:var(--paper-dim);">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">QA_SUITE.RUN</div>
+      <h2>Test cases that made it to prod</h2>
+      <p>Real projects, tested the way I'd want a product I depend on to be tested — planned, executed, and reported like a professional QA cycle.</p>
+    </div>
+    <div class="filters" id="filters">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="manual">Manual Testing</button>
+      <button class="filter-btn" data-filter="api">API Testing</button>
+      <button class="filter-btn" data-filter="quality">Code Quality</button>
+    </div>
+    <div class="tickets" id="tickets">
+
+      <div class="ticket" data-cat="manual">
+        <div class="ticket-top">
+          <span class="ticket-id">QA-001</span>
+          <span class="status-pill">✓ PASS</span>
+        </div>
+        <h3>DigiSpark — Full Site QA Pass</h3>
+        <p class="desc">Manual and exploratory test cycle on a Vite + React digital-studio site — 18 projects across a filterable grid, animated UI elements and forms. Wrote a narrative-style test report covering functional, UI and cross-browser checks.</p>
+        <div class="tag-row">
+          <span class="tag">Manual Testing</span>
+          <span class="tag">Cross-Browser</span>
+          <span class="tag">Test Report</span>
+        </div>
+        <div class="ticket-links">
+          <span class="priority">P2</span>
+          <a href="https://raphael-musyoki.vercel.app/" target="_blank" rel="noopener">Live Site ↗</a>
+        </div>
+      </div>
+
+      <div class="ticket" data-cat="manual">
+        <div class="ticket-top">
+          <span class="ticket-id">QA-002</span>
+          <span class="status-pill">✓ PASS</span>
+        </div>
+        <h3>Portfolio Site — Regression Suite</h3>
+        <p class="desc">Regression and usability testing on a personal portfolio site through several rounds of feature changes — contact form validation, interactive skill-tag filters and layout updates — confirming nothing broke as the site evolved.</p>
+        <div class="tag-row">
+          <span class="tag">Regression</span>
+          <span class="tag">Form Validation</span>
+          <span class="tag">UI Testing</span>
+        </div>
+        <div class="ticket-links">
+          <span class="priority">P2</span>
+          <a href="https://raphael-musyoki.vercel.app/" target="_blank" rel="noopener">Live Site ↗</a>
+        </div>
+      </div>
+
+      <div class="ticket" data-cat="api">
+        <div class="ticket-top">
+          <span class="ticket-id">QA-003</span>
+          <span class="status-pill">✓ PASS</span>
+        </div>
+        <h3>ReqRes API — Postman Test Collection</h3>
+        <p class="desc">Built a Postman collection covering authentication flows against the ReqRes API — environment variables, pre-request scripts, chained requests, and assertions with pm.test() and pm.expect() — debugging auth errors down to root cause.</p>
+        <div class="tag-row">
+          <span class="tag">Postman</span>
+          <span class="tag">Auth Testing</span>
+          <span class="tag">Assertions</span>
+        </div>
+        <div class="ticket-links">
+          <span class="priority">P1</span>
+          <a href="https://learning.postman.com/" target="_blank" rel="noopener">Postman ↗</a>
+        </div>
+      </div>
+
+      <div class="ticket" data-cat="quality">
+        <div class="ticket-top">
+          <span class="ticket-id">QA-004</span>
+          <span class="status-pill">✓ PASS</span>
+        </div>
+        <h3>SonarQube — Static Code Quality Audit</h3>
+        <p class="desc">Ran HTML/CSS/JS codebases through SonarQube to surface maintainability issues, code smells and quality gates before release — a static-analysis layer alongside manual test execution.</p>
+        <div class="tag-row">
+          <span class="tag">SonarQube</span>
+          <span class="tag">Static Analysis</span>
+          <span class="tag">Code Quality</span>
+        </div>
+        <div class="ticket-links">
+          <span class="priority">P3</span>
+          <a href="https://www.sonarsource.com/products/sonarqube/" target="_blank" rel="noopener">SonarQube ↗</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Coverage Section -->
+<section id="coverage">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">COVERAGE_REPORT.LOG</div>
+      <h2>Tools, frameworks &amp; coverage</h2>
+      <p>What's in the toolbelt, and how confident I am running with it.</p>
+    </div>
+
+    <div class="tool-groups">
+      <div class="tool-group reveal">
+        <h3>Test Management &amp; Tracking</h3>
+        <div class="chip-row">
+          <span class="chip">Jira</span>
+          <span class="chip">TestRail</span>
+          <span class="chip">ClickUp</span>
+          <span class="chip">Notion</span>
+        </div>
+      </div>
+      <div class="tool-group reveal">
+        <h3>API &amp; Automation</h3>
+        <div class="chip-row">
+          <span class="chip">Postman</span>
+          <span class="chip">Cypress</span>
+          <span class="chip">Playwright</span>
+        </div>
+      </div>
+      <div class="tool-group reveal">
+        <h3>Code Quality &amp; Dev Context</h3>
+        <div class="chip-row">
+          <span class="chip">SonarQube</span>
+          <span class="chip">HTML5 / CSS3 / JS</span>
+          <span class="chip">React</span>
+          <span class="chip">GitHub</span>
+        </div>
+      </div>
+      <div class="tool-group reveal">
+        <h3>Browsers &amp; Environments</h3>
+        <div class="chip-row">
+          <span class="chip">Chrome DevTools</span>
+          <span class="chip">Firefox</span>
+          <span class="chip">Safari</span>
+          <span class="chip">Vercel</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="coverage reveal">
+      <h3>Core Proficiencies</h3>
+      <div class="bar-item">
+        <div class="bar-label"><span>Manual &amp; Functional Testing</span><span class="pct">92%</span></div>
+        <div class="bar-track"><div class="bar-fill" data-pct="92"></div></div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-label"><span>API Testing (Postman)</span><span class="pct">89%</span></div>
+        <div class="bar-track"><div class="bar-fill" data-pct="89"></div></div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-label"><span>Test Case Design &amp; Planning</span><span class="pct">92%</span></div>
+        <div class="bar-track"><div class="bar-fill" data-pct="92"></div></div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-label"><span>Bug Reporting &amp; Tracking</span><span class="pct">92%</span></div>
+        <div class="bar-track"><div class="bar-fill" data-pct="92"></div></div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-label"><span>Cross-Browser &amp; Regression Testing</span><span class="pct">90%</span></div>
+        <div class="bar-track"><div class="bar-fill" data-pct="90"></div></div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-label"><span>Test Automation Fundamentals</span><span class="pct">78%</span></div>
+        <div class="bar-track"><div class="bar-fill" data-pct="78"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Contact Section -->
+<section id="contact" style="background:var(--paper-dim);">
+  <div class="container contact-wrap">
+    <div class="contact-info reveal">
+      <div class="eyebrow">OPEN_TICKET.NEW</div>
+      <h2 style="font-size:28px; margin-bottom:16px;">Let's talk about your next release</h2>
+      <p>Have a product that needs a proper test pass before it ships? I'd like to hear about it.</p>
+      <div class="contact-line"><span class="k mono">EMAIL</span><a href="mailto:raphmutunga00@gmail.com">raphmutunga00@gmail.com</a></div>
+      <div class="contact-line"><span class="k mono">PHONE</span><a href="tel:+254722795798">+254 722 795 798</a></div>
+      <div class="contact-line"><span class="k mono">BASE</span><span>Nairobi, Kenya · Remote worldwide</span></div>
+      <div class="social-row">
+        <a href="https://www.linkedin.com/in/raphael-mutunga-58b888392/" target="_blank" rel="noopener" aria-label="LinkedIn">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 11v5M8 8v.01M12 16v-5M12 11c0-1.5 1-2 2-2s2 .5 2 2v5"/></svg>
+        </a>
+        <a href="https://github.com/M-67r21" target="_blank" rel="noopener" aria-label="GitHub">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <form action="https://formsubmit.co/raphmutunga00@gmail.com" method="POST" />
+      <div class="form-head mono"></div>
+      <div class="row-2">
+        <div class="field">
+          <label for="fname">Full Name</label>
+          <input type="text" id="fname" required placeholder="Jane Doe">
+        </div>
+        <div class="field">
+          <label for="femail">Email Address</label>
+          <input type="email" id="femail" name="email" required placeholder="jane@company.com">
+        </div>
+      </div>
+      <div class="field">
+        <label for="fmsg">Message</label>
+        <textarea id="fmsg" required placeholder="Tell me about what needs testing..."></textarea>
+      </div>
+      <button type="submit" class="submit-btn">Submit Ticket</button>
+      <div class="form-msg" id="formMsg">✓ TICKET RECEIVED - I'll respond within 24 hours.</div>
+    </form>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="container footer-row">
+    <span class="mono">RM<span style="color:var(--pass);"></span>  © 2026 Raphael Musyoki. Tested with care.</span>
+    <div class="footer-links">
+      <a href="#about">About</a>
+      <a href="#projects">Test Cases</a>
+      <a href="#coverage">Coverage</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // mobile menu
+  const menuBtn = document.getElementById('menuBtn');
+  const navLinks = document.getElementById('navLinks');
+  menuBtn.addEventListener('click', () => navLinks.classList.toggle('open'));
+  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+
+  // terminal typing animation
+  const termLines = [
+    { t: "comment", text: "// running collection: qa-candidate.postman" },
+    { t: "code", text: "pm.test(<span class=\"str\">\"manual testing\"</span>, () => {" },
+    { t: "code", text: "  pm.expect(candidate.manualTesting).to.be.true;" },
+    { t: "code", text: "});" },
+    { t: "pass", text: "✓ manual testing — passed (12ms)" },
+    { t: "code", text: "pm.test(<span class=\"str\">\"API testing — Postman\"</span>, () => {" },
+    { t: "code", text: "  pm.expect(candidate.postman).to.be.true;" },
+    { t: "code", text: "});" },
+    { t: "pass", text: "✓ API testing — passed (9ms)" },
+    { t: "code", text: "pm.test(<span class=\"str\">\"bug reporting\"</span>, () => {" },
+    { t: "code", text: "  pm.expect(candidate.bugReports).to.equal(<span class=\"str\">'clear'</span>);" },
+    { t: "code", text: "});" },
+    { t: "pass", text: "✓ bug reporting — passed (7ms)" },
+    { t: "comment", text: "" },
+    { t: "pass", text: "3 passed, 0 failed — build ready to ship" },
+  ];
+
+  const termBody = document.getElementById('termBody');
+  let lineIdx = 0, charIdx = 0;
+
+  function typeNext(){
+    if(lineIdx >= termLines.length){
+      const cur = document.createElement('span');
+      cur.className = 'cursor';
+      termBody.appendChild(cur);
+      return;
+    }
+    const entry = termLines[lineIdx];
+    if(charIdx === 0){
+      const div = document.createElement('div');
+      div.className = 'line ' + (entry.t === 'comment' ? 'comment' : entry.t === 'pass' ? 'pass-tag' : '');
+      div.id = 'l' + lineIdx;
+      termBody.appendChild(div);
+    }
+    const div = document.getElementById('l' + lineIdx);
+    // reveal via innerHTML for tags support, character-based on plain text length
+    const plain = entry.text.replace(/<[^>]+>/g,'');
+    if(charIdx <= plain.length){
+      // For simplicity, type using textContent progressively then swap to full HTML at end
+      div.textContent = plain.slice(0, charIdx);
+      charIdx++;
+      setTimeout(typeNext, entry.t === 'pass' ? 10 : 14);
+    } else {
+      div.innerHTML = entry.text;
+      lineIdx++; charIdx = 0;
+      setTimeout(typeNext, entry.text === "" ? 80 : 220);
+    }
+  }
+  typeNext();
+
+  // ticket filters
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const tickets = document.querySelectorAll('.ticket');
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const f = btn.dataset.filter;
+      tickets.forEach(tk => {
+        tk.style.display = (f === 'all' || tk.dataset.cat === f) ? 'flex' : 'none';
+      });
+    });
+  });
+
+  // reveal on scroll + coverage bars
+  const revealEls = document.querySelectorAll('.reveal');
+  const barFills = document.querySelectorAll('.bar-fill');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if(e.isIntersecting){
+        e.target.classList.add('in');
+        if(e.target.classList.contains('coverage')){
+          barFills.forEach(b => b.style.width = b.dataset.pct + '%');
+        }
+      }
+    });
+  }, {threshold:0.15});
+  revealEls.forEach(el => io.observe(el));
+
+  // form submit
+  document.getElementById('qaForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    document.getElementById('formMsg').classList.add('show');
+    this.reset();
+  });
+</script>
+</body>
+</html>
